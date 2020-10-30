@@ -4,9 +4,11 @@ if(process.env.NODE_ENV !== 'production'){
 const express = require('express')
 const app = express()
 const expressLayouts = require('express-ejs-layouts')
+const bodyParser = require('body-parser')
 
 // require the index file from routes folder so that the server has access
 const indexRouter = require('./routes/index')
+const authorRouter = require('./routes/authors')
 
 //set view engine to ejs
 app.set('view engine', 'ejs')
@@ -18,6 +20,7 @@ app.set('layout', 'layouts/layout')
 app.use(expressLayouts)
 //tell express where our public files will be (stylesheets, js, images)
 app.use(express.static('public'))
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: false}))
 
 //set up database
 const mongoose = require('mongoose')
@@ -28,6 +31,9 @@ db.once('open', () => console.log('Connected to Mongoose'))
 
 
 app.use('/', indexRouter)
+// every authors file in authorRouter is prepended with '/authors'
+app.use('/authors', authorRouter)
+
 
 app.listen(process.env.PORT || 3000)//3000 included for development. server will tell us port when deployed.
 
